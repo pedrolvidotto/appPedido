@@ -9,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.ottodiv.appPedido.domain.Categoria;
 import com.ottodiv.appPedido.domain.Produto;
 import com.ottodiv.appPedido.repositories.CaregoriaRepository;
@@ -31,6 +33,7 @@ public class AppPedidoApplication implements CommandLineRunner{
 	
 	@Override
 	public void run(String...arg) throws Exception{
+		
 		Categoria cat1 = new Categoria(null, "Informatica");
 		Categoria cat2 = new Categoria(null, "Escritório");
 	
@@ -45,6 +48,7 @@ public class AppPedidoApplication implements CommandLineRunner{
 		p2.getCategorias().addAll(Arrays.asList(cat1,cat2));
 		p3.getCategorias().addAll(Arrays.asList(cat1));
 		
+	  
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2));
 		produtoRepository.saveAll(Arrays.asList(p1,p2,p3));
 	}
