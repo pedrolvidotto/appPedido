@@ -1,25 +1,26 @@
 package com.ottodiv.appPedido;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.ottodiv.appPedido.domain.Categoria;
 import com.ottodiv.appPedido.domain.Cidade;
+import com.ottodiv.appPedido.domain.Cliente;
+import com.ottodiv.appPedido.domain.Endereco;
 import com.ottodiv.appPedido.domain.Estado;
 import com.ottodiv.appPedido.domain.Produto;
+import com.ottodiv.appPedido.domain.enums.TipoCliente;
 import com.ottodiv.appPedido.repositories.CaregoriaRepository;
 import com.ottodiv.appPedido.repositories.CidadeRepository;
+import com.ottodiv.appPedido.repositories.ClienteRepository;
+import com.ottodiv.appPedido.repositories.EnderecoRepository;
 import com.ottodiv.appPedido.repositories.EstadoRepository;
 import com.ottodiv.appPedido.repositories.ProdutoRepository;
-import com.ottodiv.appPedido.resources.CategoriaResource;
 
 @SpringBootApplication
 public class AppPedidoApplication implements CommandLineRunner{
@@ -32,6 +33,10 @@ public class AppPedidoApplication implements CommandLineRunner{
 	private CidadeRepository cidadeRepository;
 	@Autowired
 	private EstadoRepository estadoRepository;
+	@Autowired
+	private ClienteRepository clienteRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(AppPedidoApplication.class, args);
@@ -69,7 +74,19 @@ public class AppPedidoApplication implements CommandLineRunner{
 		est2.getCidades().addAll(Arrays.asList(c2,c3));
 
 		estadoRepository.saveAll(Arrays.asList(est1,est2));
-		
 		cidadeRepository.saveAll(Arrays.asList(c1,c2,c3));
+		
+		Cliente cli1 = new Cliente(null,"Maria Silvar", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		
+		cli1.getTelefones().addAll(Arrays.asList("27363323","938112355"));
+		
+		Endereco e1 = new Endereco(null, "Rua FLores", "300", "Apto303", "Jardim", "38220444", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "3877012", cli1, c2);
+		
+		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
+		
+	    clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1,e2));
 	}
+
 }
