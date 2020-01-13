@@ -1,25 +1,32 @@
 package com.ottodiv.appPedido;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ottodiv.appPedido.domain.Categoria;
 import com.ottodiv.appPedido.domain.Cidade;
 import com.ottodiv.appPedido.domain.Cliente;
 import com.ottodiv.appPedido.domain.Endereco;
 import com.ottodiv.appPedido.domain.Estado;
+import com.ottodiv.appPedido.domain.Pagamento;
+import com.ottodiv.appPedido.domain.PagamentoComBoleto;
+import com.ottodiv.appPedido.domain.PagamentoComCartao;
+import com.ottodiv.appPedido.domain.Pedido;
 import com.ottodiv.appPedido.domain.Produto;
+import com.ottodiv.appPedido.domain.enums.EstadoPagamento;
 import com.ottodiv.appPedido.domain.enums.TipoCliente;
 import com.ottodiv.appPedido.repositories.CaregoriaRepository;
 import com.ottodiv.appPedido.repositories.CidadeRepository;
 import com.ottodiv.appPedido.repositories.ClienteRepository;
 import com.ottodiv.appPedido.repositories.EnderecoRepository;
 import com.ottodiv.appPedido.repositories.EstadoRepository;
+import com.ottodiv.appPedido.repositories.PagamentoRepository;
+import com.ottodiv.appPedido.repositories.PedidoRepository;
 import com.ottodiv.appPedido.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -37,6 +44,10 @@ public class AppPedidoApplication implements CommandLineRunner{
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(AppPedidoApplication.class, args);
@@ -87,6 +98,21 @@ public class AppPedidoApplication implements CommandLineRunner{
 
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		Pedido ped1 = new Pedido(null,sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null,sdf.parse("10/10/2017 19:35"), cli1, e2);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDETE, ped2, sdf.parse("20/10/2017 00:00"),null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1,ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1,pagto2));
 	}
 
 }
